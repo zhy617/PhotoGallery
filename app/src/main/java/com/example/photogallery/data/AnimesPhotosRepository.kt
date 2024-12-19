@@ -1,4 +1,4 @@
 package com.example.photogallery.data
 
-class Datasource {
+interface AnimesPhotosRepository {
 }
