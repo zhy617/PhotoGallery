@@ -4,11 +4,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.photogallery.AnimePhotosApplication
+import com.example.photogallery.data.AnimePhotosRepository
+import com.example.photogallery.data.NetworkAnimePhotosRepository
 import kotlinx.coroutines.launch
 import java.io.IOException
-import com.example.photogallery.network.AnimeApi
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
 import kotlinx.serialization.InternalSerializationApi
+import retrofit2.HttpException
 
 sealed interface AnimeUiState {
     data class Success(val photos: String) : AnimeUiState
@@ -16,7 +25,19 @@ sealed interface AnimeUiState {
     object Loading : AnimeUiState
 }
 
-class AnimeViewModel : ViewModel() {
+
+class AnimeViewModel(private val animePhotosRepository: AnimePhotosRepository) : ViewModel() {
+    /** 伴生对象 */
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as AnimePhotosApplication)
+                val animePhotosRepository = application.container.animePhotosRepository
+                AnimeViewModel(animePhotosRepository = animePhotosRepository)
+            }
+        }
+    }
+
     /** The mutable State that stores the status of the most recent request */
     var animeUiState: AnimeUiState by mutableStateOf(AnimeUiState.Loading)
         private set
@@ -35,13 +56,15 @@ class AnimeViewModel : ViewModel() {
     @OptIn(InternalSerializationApi::class)
     fun getAnimePhotos() {
         viewModelScope.launch {
-            try {
-                val photo = AnimeApi.retrofitService.getPhoto()
-                animeUiState = AnimeUiState.Success(
-                    "Success: 1 Anime photo retrieved"
+            animeUiState = try {
+                val listResult = animePhotosRepository.getAnimePhotos()
+                AnimeUiState.Success(
+                    "Success: ${listResult.size} Anime photos retrieved"
                 )
             } catch (e: IOException) {
-                animeUiState = AnimeUiState.Error
+                AnimeUiState.Error
+            } catch (e: HttpException) {
+                AnimeUiState.Error
             }
         }
     }

@@ -29,7 +29,9 @@ fun AnimePhotosApp() {
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
-            val animeViewModel: AnimeViewModel = viewModel()
+            val animeViewModel: AnimeViewModel = viewModel(
+                factory = AnimeViewModel.Factory
+            )
             HomeScreen(
                 animeUiState = animeViewModel.animeUiState,
                 contentPadding = it,
