@@ -8,7 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.http.GET
 
 private const val BASE_URL =
-    "https://android-kotlin-fun-mars-server.appspot.com"
+    "https://www.dmoe.cc/"
 
 private val retrofit = Retrofit
     .Builder()
@@ -18,11 +18,10 @@ private val retrofit = Retrofit
 // 添加转换器
 
 
-
 interface AnimeApiService {
     @OptIn(InternalSerializationApi::class)
-    @GET("photos")
-    suspend fun getPhotos(): List<AnimePhoto>
+    @GET("random.php?return=json")
+    suspend fun getPhoto(): AnimePhoto
 
 }
 

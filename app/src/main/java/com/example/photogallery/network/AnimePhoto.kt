@@ -4,9 +4,12 @@ import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@InternalSerializationApi @Serializable
+@InternalSerializationApi
+@Serializable
 data class AnimePhoto(
-    val id: Int,
-    @SerialName(value = "img_src")
-    val imgSrc: String
+    val code: Int,
+    @SerialName(value = "imgurl")
+    val imgSrc: String,
+    val width: Int,
+    val height: Int,
 )

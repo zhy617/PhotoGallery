@@ -29,16 +29,16 @@ class AnimeViewModel : ViewModel() {
     }
 
     /**
-     * Gets Animes photos information from the Animes API Retrofit service and updates the
+     * Gets Anime photos information from the Anime API Retrofit service and updates the
      *
      */
     @OptIn(InternalSerializationApi::class)
     fun getAnimePhotos() {
         viewModelScope.launch {
             try {
-                val listResult = AnimeApi.retrofitService.getPhotos()
+                val photo = AnimeApi.retrofitService.getPhoto()
                 animeUiState = AnimeUiState.Success(
-                    "Success: ${listResult.size} Mars photos retrieved"
+                    "Success: 1 Anime photo retrieved"
                 )
             } catch (e: IOException) {
                 animeUiState = AnimeUiState.Error
