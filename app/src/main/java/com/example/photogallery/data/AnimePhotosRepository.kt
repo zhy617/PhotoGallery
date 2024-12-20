@@ -3,6 +3,7 @@ package com.example.photogallery.data
 //import com.example.photogallery.network.AnimeApi
 import com.example.photogallery.network.AnimeApiService
 import com.example.photogallery.network.AnimePhoto
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -21,14 +22,28 @@ class NetworkAnimePhotosRepository(
     @OptIn(InternalSerializationApi::class)
     override suspend fun getAnimePhotos(): List<AnimePhoto> {
         return coroutineScope {
-            // 并发发起 10 个请求
-            val deferredList = (1..10).map {
-                async(IO) { animeApiService.getPhoto() }
+            val totalImages = 20
+            var fetchedImages = 0
+            val results = mutableListOf<AnimePhoto>()
+
+            while (fetchedImages < totalImages) {
+                val photos = animeApiService.getPhotos()
+
+                // Check if the API returned enough data
+                if (photos.isEmpty()) {
+                    break // Stop fetching if no more data is returned
+                }
+
+                // Determine how many images can be added in this batch
+                val remainingImages = totalImages - fetchedImages
+                val photosToAdd = photos.take(minOf(remainingImages, photos.size))
+
+                results.addAll(photosToAdd)
+                fetchedImages += photosToAdd.size
             }
-            // 等待所有请求完成并合并结果
-            deferredList.awaitAll() // 如果每个请求返回一个列表，使用 flatten 展平
+
+            results
         }
     }
 }
-
 

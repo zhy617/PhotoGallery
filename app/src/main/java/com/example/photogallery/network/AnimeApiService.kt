@@ -8,7 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.http.GET
 
 private const val BASE_URL =
-    "https://www.dmoe.cc/"
+    "https://api.hn/"
 
 private val retrofit = Retrofit
     .Builder()
@@ -20,8 +20,8 @@ private val retrofit = Retrofit
 
 interface AnimeApiService {
     @OptIn(InternalSerializationApi::class)
-    @GET("random.php?return=json")
-    suspend fun getPhoto(): AnimePhoto
+    @GET("name.php?return=jsonpro")
+    suspend fun getPhotos(): List<AnimePhoto>
 
 }
 

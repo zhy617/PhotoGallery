@@ -1,6 +1,7 @@
 package com.example.photogallery.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -21,20 +22,20 @@ import com.example.photogallery.ui.screens.AnimeViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimePhotosApp() {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = { AnimeTopAppBar(scrollBehavior = scrollBehavior) }
-    ) {
+        topBar = { AnimeTopAppBar() } // 移除滚动行为，让 TopAppBar 固定显示
+    ) { innerPadding ->
         Surface(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding) // 确保内容不会被 TopAppBar 遮挡
         ) {
             val animeViewModel: AnimeViewModel = viewModel(
                 factory = AnimeViewModel.Factory
             )
             HomeScreen(
                 animeUiState = animeViewModel.animeUiState,
-                contentPadding = it,
+                contentPadding = innerPadding, // 将 padding 传递给 LazyVerticalGrid
             )
         }
     }
@@ -42,9 +43,8 @@ fun AnimePhotosApp() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AnimeTopAppBar(scrollBehavior: TopAppBarScrollBehavior, modifier: Modifier = Modifier) {
+fun AnimeTopAppBar(modifier: Modifier = Modifier) {
     CenterAlignedTopAppBar(
-        scrollBehavior = scrollBehavior,
         title = {
             Text(
                 text = stringResource(R.string.app_name),

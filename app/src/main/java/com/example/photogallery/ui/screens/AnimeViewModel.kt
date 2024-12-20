@@ -20,7 +20,7 @@ import kotlinx.serialization.InternalSerializationApi
 import retrofit2.HttpException
 
 sealed interface AnimeUiState {
-    data class Success @OptIn(InternalSerializationApi::class) constructor(val photos: AnimePhoto) :
+    data class Success @OptIn(InternalSerializationApi::class) constructor(val photos: List<AnimePhoto>) :
         AnimeUiState
 
     object Error : AnimeUiState
@@ -62,7 +62,7 @@ class AnimeViewModel(private val animePhotosRepository: AnimePhotosRepository) :
                 val listResult = animePhotosRepository.getAnimePhotos()
                 val result = listResult[0]
                 AnimeUiState.Success(
-                    result
+                    listResult
                 )
             } catch (e: IOException) {
                 AnimeUiState.Error
