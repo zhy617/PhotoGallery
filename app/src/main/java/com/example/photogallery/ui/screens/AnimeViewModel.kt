@@ -12,15 +12,17 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.photogallery.AnimePhotosApplication
 import com.example.photogallery.data.AnimePhotosRepository
 import com.example.photogallery.data.NetworkAnimePhotosRepository
+import com.example.photogallery.network.AnimePhoto
 import kotlinx.coroutines.launch
 import java.io.IOException
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
+
 import kotlinx.serialization.InternalSerializationApi
 import retrofit2.HttpException
 
 sealed interface AnimeUiState {
-    data class Success(val photos: String) : AnimeUiState
+    data class Success @OptIn(InternalSerializationApi::class) constructor(val photos: AnimePhoto) :
+        AnimeUiState
+
     object Error : AnimeUiState
     object Loading : AnimeUiState
 }
@@ -58,8 +60,9 @@ class AnimeViewModel(private val animePhotosRepository: AnimePhotosRepository) :
         viewModelScope.launch {
             animeUiState = try {
                 val listResult = animePhotosRepository.getAnimePhotos()
+                val result = listResult[0]
                 AnimeUiState.Success(
-                    "Success: ${listResult.size} Anime photos retrieved"
+                    result
                 )
             } catch (e: IOException) {
                 AnimeUiState.Error
