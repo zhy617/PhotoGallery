@@ -22,7 +22,7 @@ class NetworkAnimePhotosRepository(
     @OptIn(InternalSerializationApi::class)
     override suspend fun getAnimePhotos(): List<AnimePhoto> {
         return coroutineScope {
-            val totalImages = 20
+            val totalImages = 14
             var fetchedImages = 0
             val results = mutableListOf<AnimePhoto>()
 

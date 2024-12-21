@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,13 +47,32 @@ fun HomeScreen(
     animeUiState: AnimeUiState,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    onRefresh: () -> Unit // 新增刷新回调
 ) {
-    when (animeUiState) {
-        is AnimeUiState.Success ->
-            PhotosGridScreen(photos = animeUiState.photos, modifier = modifier)
+    Box(modifier = Modifier.fillMaxSize()) {
+        // 显示内容
+        when (animeUiState) {
+            is AnimeUiState.Success -> PhotosGridScreen(
+                photos = animeUiState.photos,
+                modifier = modifier
+            )
 
-        is AnimeUiState.Loading -> LoadingScreen(modifier)
-        is AnimeUiState.Error -> ErrorScreen(modifier)
+            is AnimeUiState.Loading -> LoadingScreen(modifier)
+            is AnimeUiState.Error -> ErrorScreen(modifier)
+        }
+
+        // 添加悬浮按钮
+        FloatingActionButton(
+            onClick = onRefresh,
+            modifier = Modifier
+                .align(Alignment.BottomEnd) // 定位到右下角
+                .padding(16.dp) // 距离边缘 16dp
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_refresh_image), // 使用刷新图标
+                contentDescription = stringResource(R.string.refresh_button)
+            )
+        }
     }
 }
 

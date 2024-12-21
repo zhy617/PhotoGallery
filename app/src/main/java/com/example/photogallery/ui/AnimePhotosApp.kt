@@ -36,6 +36,7 @@ fun AnimePhotosApp() {
             HomeScreen(
                 animeUiState = animeViewModel.animeUiState,
                 contentPadding = innerPadding, // 将 padding 传递给 LazyVerticalGrid
+                onRefresh = { animeViewModel.getAnimePhotos() } // 添加刷新回调
             )
         }
     }
